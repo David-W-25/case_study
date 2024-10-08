@@ -1,0 +1,64 @@
+---
+title: "case_study"
+author: "David"
+date: "2024-10-08"
+output: html_document
+---
+
+```{r setup, echo = FALSE, message = FALSE}
+library(tidyverse)
+library(p8105.datasets)
+library(leaflet)
+data(nyc_airbnb)
+```
+
+## Brain storm question
+
+price of airbnb
+
+```{r}
+nyc_airbnb |>
+  janitor::clean_names() |>
+  drop_na(price) |>
+  arrange(price) |>
+  relocate(id, name, price) |>
+  head(5)
+```
+
+```{r}
+nyc_airbnb |>
+  filter(price <= 250) |>
+  ggplot(aes(x = price, fill = neighbourhood_group)) +
+  geom_histogram() +
+  facet_grid(. ~ neighbourhood_group)
+```
+
+```{r}
+nyc_airbnb |>
+  ggplot(aes(x = review_scores_location, y = price)) +
+  geom_point()
+```
+
+```{r}
+nyc_airbnb |>
+  filter(
+    neighbourhood_group == "Manhattan",
+    price < 1000
+  ) |>
+  ggplot(aes(x = lat, y = long, color = price)) +
+  geom_point()
+
+```
+
+```{r}
+nyc_airbnb |>
+  filter(neighbourhood_group == "Manhattan",
+         price < 1000) |>
+  arrange(desc(price)) |>
+  slice(1:100) |>
+  leaflet() |>
+  addTiles() |>
+  addMarkers(~lat, ~long)
+```
+
+
